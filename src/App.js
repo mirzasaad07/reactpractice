@@ -1,27 +1,33 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Seasondisplay from './components/seasondisplay';
+import Spinner from './components/spinner'
 
 class App extends Component {
+   constructor(props){
+     super(props);
+     this.state={
+       lat: null,
+       errmessage: ''
+     }
+
+    };
+    componentDidMount(){
+      window.navigator.geolocation.getCurrentPosition(
+        position => this.setState({lat: position.coords.latitude}),
+        err => this.setState({errmessage: err.message})
+      );
+    }
+   
+
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+    if(this.state.lat && !this.state.errmessage){
+      return <div><Seasondisplay lat={this.state.lat}/></div>
+    }
+    if(!this.state.lat && this.state.errmessage){
+      return <h3>Error: {this.state.errmessage}</h3>
+    }
+     return <Spinner message = 'please allow the location request'/>
   }
 }
 
